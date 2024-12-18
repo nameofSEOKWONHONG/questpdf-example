@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using QuestPDF.Fluent;
 using QuestPDF.Infrastructure;
 using SkiaSharp;
@@ -8,6 +9,10 @@ public static class ExampleRight
 {
     public static void CreateRight(this IContainer container)
     {
+        //라인 차트
+        // 원리는 아래와 같다.
+        // maxValue, minValue에 따라 범위를 넘어서는 값은 모두 maxValue + 1, minValue - 1로 처리한다.
+        // 범위는 각 라인의 레드라인은 정상 최대값, 블루라인은 정상 최소값이다.
         container
             .Column(c =>
             {
@@ -165,32 +170,71 @@ public static class ExampleRight
                                 .Height(40)
                                 .SkiaSharpCanvas((canvas, size) =>
                                 {
-                                    // X축
-                                    canvas.DrawLine(0, 10, 100, 10, new SKPaint
+                                    var start = new DateTime(2024, 12, 30, 22, 00, 00);
+                                    var items = new List<SKPoint>();
+                                    var index = 0f;
+                                    var action = (double y) =>
+                                    {
+                                        var y_min = 8;
+                                        var y_max = 27;
+                                        var b_min = 5;
+                                        var b_max = 22;
+                                        var y_prime = b_max - (y - y_min) / (y_max - y_min) * (b_max - b_min);
+                                        return y_prime;
+                                    };
+                                    
+                                    Console.WriteLine("=================호흡수=================");
+                                    for (var i = start; i <= start.AddHours(11); i = i.AddMinutes(10))
+                                    { 
+                                        var r = Random.Shared.Next(9, 27);
+                                        Console.WriteLine(r);
+                                        var y = action(r);
+                                        items.Add(new SKPoint(index, (float)y));
+                                        index += 1.5f;
+                                    }
+                                    Console.WriteLine("=================호흡수=================");
+                                    
+                                    // 라인1
+                                    canvas.DrawLine(0, 7f, 100, 7f, new SKPaint
                                     {
                                         Color = SKColors.Red,
                                         StrokeWidth = 0.2f,
                                         IsStroke = true,
                                     });
-                                    
-                                    canvas.DrawLine(0, 20, 100, 20, new SKPaint
+
+                                    //라인2
+                                    canvas.DrawLine(0, 20f, 100, 20f, new SKPaint
                                     {
                                         Color = SKColors.CornflowerBlue,
                                         StrokeWidth = 0.2f,
                                         IsStroke = true,
                                     });
-                                    
+
                                     //contents
-                                    var items = new List<SKPoint>();
-                                    Enumerable.Range(1, 100).ToList().ForEach(i =>
-                                    {
-                                        items.Add(new SKPoint(i, Random.Shared.Next(5, 25)));
-                                    });
                                     for (var i = 0; i < items.Count; i++)
                                     {
                                         if(i == items.Count - 1) break;
                                         var current = items[i];
                                         var next = items[i + 1];
+
+                                        #region [debug]
+
+                                        // canvas.DrawText(current.Y.ToString(), current.X, current.Y, SKTextAlign.Center, new SKFont()
+                                        // {
+                                        //     Size = 3f,
+                                        // }, new SKPaint()
+                                        // {
+                                        //     Color = chartColor,                
+                                        // });
+                                        // canvas.DrawCircle(current.X, current.Y, 2, new SKPaint()
+                                        // {
+                                        //     Color = chartColor,
+                                        //     StrokeWidth = 0.1f,
+                                        //     IsStroke = true                
+                                        // });            
+
+                                        #endregion
+
                                         canvas.DrawLine(current.X, current.Y, next.X, next.Y, new SKPaint()
                                         {
                                             Color = SKColors.Black,
@@ -199,14 +243,14 @@ public static class ExampleRight
                                         });
                                     }
                                     //contents
-                                    
+
                                     canvas.DrawLine(0, 25, 100, 25, new SKPaint()
                                     {
                                         Color = SKColors.Black,
                                         StrokeWidth = 0.2f,
                                         IsStroke = true,
                                     });
-                                    
+
                                     canvas.DrawLine(0, 25, 0, 28, new SKPaint()
                                     {
                                         Color = SKColors.Black,
@@ -225,7 +269,7 @@ public static class ExampleRight
                                         StrokeWidth = 0.2f,
                                         IsStroke = true,
                                     });      
-                                    
+
                                     canvas.DrawText("PM10", 0, 35, new SKPaint()
                                     {
                                         Color = SKColors.Black,
@@ -240,7 +284,7 @@ public static class ExampleRight
                                     {
                                         Color = SKColors.Black,
                                         TextSize = 4,
-                                    });                                                        
+                                    });
                                 });
                             
                             tt.Cell().Row(3).Column(1)
@@ -308,32 +352,68 @@ public static class ExampleRight
                                 .Height(40)
                                 .SkiaSharpCanvas((canvas, size) =>
                                 {
-                                    // X축
-                                    canvas.DrawLine(0, 10, 100, 10, new SKPaint
+                                    var start = new DateTime(2024, 12, 30, 22, 00, 00);
+                                    var items = new List<SKPoint>();
+                                    var index = 0f;
+                                    var action = (double y) =>
+                                    {
+                                        var y_min = 92;
+                                        var y_max = 101;
+                                        var b_min = 5;
+                                        var b_max = 22;
+                                        var y_prime = b_max - (y - y_min) / (y_max - y_min) * (b_max - b_min);
+                                        return y_prime;
+                                    };
+                                    
+                                    //값의 범위는 50 ~ 110까지
+                                    for (var i = start; i <= start.AddHours(11); i = i.AddMinutes(10))
+                                    {
+                                        var y = action(Random.Shared.Next(92, 102));
+                                        items.Add(new SKPoint(index, (float)y));
+                                        index += 1.5f;
+                                    }
+                                    
+                                    // 라인1
+                                    canvas.DrawLine(0, 7f, 100, 7f, new SKPaint
                                     {
                                         Color = SKColors.Red,
                                         StrokeWidth = 0.2f,
                                         IsStroke = true,
                                     });
-                                    
-                                    canvas.DrawLine(0, 20, 100, 20, new SKPaint
+
+                                    //라인2
+                                    canvas.DrawLine(0, 19.8f, 100, 19.8f, new SKPaint
                                     {
                                         Color = SKColors.CornflowerBlue,
                                         StrokeWidth = 0.2f,
                                         IsStroke = true,
                                     });
-                                    
+
                                     //contents
-                                    var items = new List<SKPoint>();
-                                    Enumerable.Range(1, 100).ToList().ForEach(i =>
-                                    {
-                                        items.Add(new SKPoint(i, Random.Shared.Next(5, 25)));
-                                    });
                                     for (var i = 0; i < items.Count; i++)
                                     {
                                         if(i == items.Count - 1) break;
                                         var current = items[i];
                                         var next = items[i + 1];
+
+                                        #region [debug]
+
+                                        // canvas.DrawText(current.Y.ToString(), current.X, current.Y, SKTextAlign.Center, new SKFont()
+                                        // {
+                                        //     Size = 3f,
+                                        // }, new SKPaint()
+                                        // {
+                                        //     Color = chartColor,                
+                                        // });
+                                        // canvas.DrawCircle(current.X, current.Y, 2, new SKPaint()
+                                        // {
+                                        //     Color = chartColor,
+                                        //     StrokeWidth = 0.1f,
+                                        //     IsStroke = true                
+                                        // });            
+
+                                        #endregion
+
                                         canvas.DrawLine(current.X, current.Y, next.X, next.Y, new SKPaint()
                                         {
                                             Color = SKColors.Black,
@@ -342,14 +422,14 @@ public static class ExampleRight
                                         });
                                     }
                                     //contents
-                                    
+
                                     canvas.DrawLine(0, 25, 100, 25, new SKPaint()
                                     {
                                         Color = SKColors.Black,
                                         StrokeWidth = 0.2f,
                                         IsStroke = true,
                                     });
-                                    
+
                                     canvas.DrawLine(0, 25, 0, 28, new SKPaint()
                                     {
                                         Color = SKColors.Black,
@@ -368,7 +448,7 @@ public static class ExampleRight
                                         StrokeWidth = 0.2f,
                                         IsStroke = true,
                                     });      
-                                    
+
                                     canvas.DrawText("PM10", 0, 35, new SKPaint()
                                     {
                                         Color = SKColors.Black,
@@ -383,7 +463,7 @@ public static class ExampleRight
                                     {
                                         Color = SKColors.Black,
                                         TextSize = 4,
-                                    });                                                        
+                                    });                              
                                 });
                             
                             tt.Cell().Row(3).Column(1)
@@ -431,32 +511,68 @@ public static class ExampleRight
                                 .Height(40)
                                 .SkiaSharpCanvas((canvas, size) =>
                                 {
-                                    // X축
-                                    canvas.DrawLine(0, 10, 100, 10, new SKPaint
+                                    var start = new DateTime(2024, 12, 30, 22, 00, 00);
+                                    var items = new List<SKPoint>();
+                                    var index = 0f;
+                                    var action = (double y) =>
+                                    {
+                                        var y_min = 40;
+                                        var y_max = 120;
+                                        var b_min = 5;
+                                        var b_max = 25;
+                                        var y_prime = b_max - (y - y_min) / (y_max - y_min) * (b_max - b_min);
+                                        return y_prime;
+                                    };
+                                    
+                                    //값의 범위는 50 ~ 110까지
+                                    for (var i = start; i <= start.AddHours(11); i = i.AddMinutes(10))
+                                    {
+                                        var y = action(Random.Shared.Next(50, 110));
+                                        items.Add(new SKPoint(index, (float)y));
+                                        index += 1.5f;
+                                    }
+                                    
+                                    // 라인1
+                                    canvas.DrawLine(0, 10f, 100, 10f, new SKPaint
                                     {
                                         Color = SKColors.Red,
                                         StrokeWidth = 0.2f,
                                         IsStroke = true,
                                     });
-                                    
-                                    canvas.DrawLine(0, 20, 100, 20, new SKPaint
+
+                                    //라인2
+                                    canvas.DrawLine(0, 20f, 100, 20f, new SKPaint
                                     {
                                         Color = SKColors.CornflowerBlue,
                                         StrokeWidth = 0.2f,
                                         IsStroke = true,
                                     });
-                                    
+
                                     //contents
-                                    var items = new List<SKPoint>();
-                                    Enumerable.Range(1, 100).ToList().ForEach(i =>
-                                    {
-                                        items.Add(new SKPoint(i, Random.Shared.Next(5, 25)));
-                                    });
                                     for (var i = 0; i < items.Count; i++)
                                     {
                                         if(i == items.Count - 1) break;
                                         var current = items[i];
                                         var next = items[i + 1];
+
+                                        #region [debug]
+
+                                        // canvas.DrawText(current.Y.ToString(), current.X, current.Y, SKTextAlign.Center, new SKFont()
+                                        // {
+                                        //     Size = 3f,
+                                        // }, new SKPaint()
+                                        // {
+                                        //     Color = chartColor,                
+                                        // });
+                                        // canvas.DrawCircle(current.X, current.Y, 2, new SKPaint()
+                                        // {
+                                        //     Color = chartColor,
+                                        //     StrokeWidth = 0.1f,
+                                        //     IsStroke = true                
+                                        // });            
+
+                                        #endregion
+
                                         canvas.DrawLine(current.X, current.Y, next.X, next.Y, new SKPaint()
                                         {
                                             Color = SKColors.Black,
@@ -465,14 +581,14 @@ public static class ExampleRight
                                         });
                                     }
                                     //contents
-                                    
+
                                     canvas.DrawLine(0, 25, 100, 25, new SKPaint()
                                     {
                                         Color = SKColors.Black,
                                         StrokeWidth = 0.2f,
                                         IsStroke = true,
                                     });
-                                    
+
                                     canvas.DrawLine(0, 25, 0, 28, new SKPaint()
                                     {
                                         Color = SKColors.Black,
@@ -491,7 +607,7 @@ public static class ExampleRight
                                         StrokeWidth = 0.2f,
                                         IsStroke = true,
                                     });      
-                                    
+
                                     canvas.DrawText("PM10", 0, 35, new SKPaint()
                                     {
                                         Color = SKColors.Black,
@@ -506,7 +622,7 @@ public static class ExampleRight
                                     {
                                         Color = SKColors.Black,
                                         TextSize = 4,
-                                    });                                                        
+                                    });                               
                                 });
                             
                             tt.Cell().Row(3).Column(1)
@@ -574,32 +690,68 @@ public static class ExampleRight
                                 .Height(40)
                                 .SkiaSharpCanvas((canvas, size) =>
                                 {
-                                    // X축
-                                    canvas.DrawLine(0, 10, 100, 10, new SKPaint
+                                    var start = new DateTime(2024, 12, 30, 22, 00, 00);
+                                    var items = new List<SKPoint>();
+                                    var index = 0f;
+                                    var action = (double y) =>
+                                    {
+                                        var y_min = 350;
+                                        var y_max = 380;
+                                        var b_min = 5;
+                                        var b_max = 25;
+                                        var y_prime = b_max - (y - y_min) / (y_max - y_min) * (b_max - b_min);
+                                        return y_prime;
+                                    };
+                                    
+                                    //값의 범위는 360 ~ 380까지
+                                    for (var i = start; i <= start.AddHours(11); i = i.AddMinutes(10))
+                                    {
+                                        var y = action(Random.Shared.Next(360, 380));
+                                        items.Add(new SKPoint(index, (float)y));
+                                        index += 1.5f;
+                                    }
+                                    
+                                    // 라인1
+                                    canvas.DrawLine(0, 8.4f, 100, 8.4f, new SKPaint
                                     {
                                         Color = SKColors.Red,
                                         StrokeWidth = 0.2f,
                                         IsStroke = true,
                                     });
-                                    
-                                    canvas.DrawLine(0, 20, 100, 20, new SKPaint
+
+                                    //라인2
+                                    canvas.DrawLine(0, 15f, 100, 15f, new SKPaint
                                     {
                                         Color = SKColors.CornflowerBlue,
                                         StrokeWidth = 0.2f,
                                         IsStroke = true,
                                     });
-                                    
+
                                     //contents
-                                    var items = new List<SKPoint>();
-                                    Enumerable.Range(1, 100).ToList().ForEach(i =>
-                                    {
-                                        items.Add(new SKPoint(i, Random.Shared.Next(5, 25)));
-                                    });
                                     for (var i = 0; i < items.Count; i++)
                                     {
                                         if(i == items.Count - 1) break;
                                         var current = items[i];
                                         var next = items[i + 1];
+
+                                        #region [debug]
+
+                                        // canvas.DrawText(current.Y.ToString(), current.X, current.Y, SKTextAlign.Center, new SKFont()
+                                        // {
+                                        //     Size = 3f,
+                                        // }, new SKPaint()
+                                        // {
+                                        //     Color = chartColor,                
+                                        // });
+                                        // canvas.DrawCircle(current.X, current.Y, 2, new SKPaint()
+                                        // {
+                                        //     Color = chartColor,
+                                        //     StrokeWidth = 0.1f,
+                                        //     IsStroke = true                
+                                        // });            
+
+                                        #endregion
+
                                         canvas.DrawLine(current.X, current.Y, next.X, next.Y, new SKPaint()
                                         {
                                             Color = SKColors.Black,
@@ -608,14 +760,14 @@ public static class ExampleRight
                                         });
                                     }
                                     //contents
-                                    
+
                                     canvas.DrawLine(0, 25, 100, 25, new SKPaint()
                                     {
                                         Color = SKColors.Black,
                                         StrokeWidth = 0.2f,
                                         IsStroke = true,
                                     });
-                                    
+
                                     canvas.DrawLine(0, 25, 0, 28, new SKPaint()
                                     {
                                         Color = SKColors.Black,
@@ -634,7 +786,7 @@ public static class ExampleRight
                                         StrokeWidth = 0.2f,
                                         IsStroke = true,
                                     });      
-                                    
+
                                     canvas.DrawText("PM10", 0, 35, new SKPaint()
                                     {
                                         Color = SKColors.Black,
@@ -649,7 +801,7 @@ public static class ExampleRight
                                     {
                                         Color = SKColors.Black,
                                         TextSize = 4,
-                                    });                                                        
+                                    });
                                 });
                             
                             tt.Cell().Row(3).Column(1)

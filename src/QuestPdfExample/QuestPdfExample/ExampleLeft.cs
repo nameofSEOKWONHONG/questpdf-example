@@ -107,30 +107,37 @@ public static class ExampleLeft
                                         IsStroke = true,
                                     });
                                     
+                                    //중간 라인
                                     canvas.DrawLine(10, 20 - 1, 295, 20 - 1,  new SKPaint
                                     {
                                         Color = SKColors.Black,
                                         StrokeWidth = 0.1f,
                                         IsStroke = true,
                                     });
+                                    
+                                    //하단라인
                                     canvas.DrawLine(10, 30 - 1, 295, 30 - 1,  new SKPaint
                                     {
                                         Color = SKColors.Black,
                                         StrokeWidth = 0.1f,
                                         IsStroke = true,
-                                    });                                                            
+                                    });               
+                                    
+                                    //시간라인 1
                                     canvas.DrawLine(10, 40 - 1, 295, 40 - 1,  new SKPaint
                                     {
                                         Color = SKColors.Black,
                                         StrokeWidth = 0.1f,
                                         IsStroke = true,
                                     });  
+                                    //시간라인 2
                                     canvas.DrawLine(10, 50 - 1, 295, 50 - 1,  new SKPaint
                                     {
                                         Color = SKColors.Black,
                                         StrokeWidth = 0.1f,
                                         IsStroke = true,
-                                    });         
+                                    });        
+                                    //시간라인 3
                                     canvas.DrawLine(10, 60 - 1, 295, 60 - 1,  new SKPaint
                                     {
                                         Color = SKColors.Black,
@@ -153,10 +160,12 @@ public static class ExampleLeft
                                                 IsStroke = true,
                                             });
 
-                                            canvas.DrawText(i.ToString("HH"), x - 2, 13, new SKPaint()
+                                            canvas.DrawText(i.ToString("HH"), x - 2, 13, SKTextAlign.Center, new SKFont()
                                             {
-                                                Color = SKColors.Black,
-                                                TextSize = 4,
+                                                Size = 4,
+                                            }, new SKPaint()
+                                            {
+                                                Color = SKColors.Black
                                             });    
                                         }
                                         else

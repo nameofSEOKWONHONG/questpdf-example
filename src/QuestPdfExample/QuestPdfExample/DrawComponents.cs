@@ -161,4 +161,99 @@ public class DrawComponents
             });
         }        
     }
+
+    public static void DrawSmallLineChart(SKCanvas canvas, Size size, List<SKPoint> data, SKColor chartColor)
+    {
+        // 라인1
+        canvas.DrawLine(0, 10, 100, 10, new SKPaint
+        {
+            Color = SKColors.Red,
+            StrokeWidth = 0.2f,
+            IsStroke = true,
+        });
+
+        //라인2
+        canvas.DrawLine(0, 20, 100, 20, new SKPaint
+        {
+            Color = SKColors.CornflowerBlue,
+            StrokeWidth = 0.2f,
+            IsStroke = true,
+        });
+
+        //contents
+        for (var i = 0; i < data.Count; i++)
+        {
+            if(i == data.Count - 1) break;
+            var current = data[i];
+            var next = data[i + 1];
+
+            #region [debug]
+
+            // canvas.DrawText(current.Y.ToString(), current.X, current.Y, SKTextAlign.Center, new SKFont()
+            // {
+            //     Size = 3f,
+            // }, new SKPaint()
+            // {
+            //     Color = chartColor,                
+            // });
+            // canvas.DrawCircle(current.X, current.Y, 2, new SKPaint()
+            // {
+            //     Color = chartColor,
+            //     StrokeWidth = 0.1f,
+            //     IsStroke = true                
+            // });            
+
+            #endregion
+
+            canvas.DrawLine(current.X, current.Y, next.X, next.Y, new SKPaint()
+            {
+                Color = chartColor,
+                StrokeWidth = 0.1f,
+                IsStroke = true
+            });
+        }
+        //contents
+
+        canvas.DrawLine(0, 25, 100, 25, new SKPaint()
+        {
+            Color = SKColors.Black,
+            StrokeWidth = 0.2f,
+            IsStroke = true,
+        });
+
+        canvas.DrawLine(0, 25, 0, 28, new SKPaint()
+        {
+            Color = SKColors.Black,
+            StrokeWidth = 0.2f,
+            IsStroke = true,
+        });
+        canvas.DrawLine(50, 25, 50, 28, new SKPaint()
+        {
+            Color = SKColors.Black,
+            StrokeWidth = 0.2f,
+            IsStroke = true,
+        });
+        canvas.DrawLine(100, 25, 100, 28, new SKPaint()
+        {
+            Color = SKColors.Black,
+            StrokeWidth = 0.2f,
+            IsStroke = true,
+        });      
+
+        canvas.DrawText("PM10", 0, 35, new SKPaint()
+        {
+            Color = SKColors.Black,
+            TextSize = 4,
+        });
+        canvas.DrawText("AM02", 45, 35, new SKPaint()
+        {
+            Color = SKColors.Black,
+            TextSize = 4,
+        });                                                        
+        canvas.DrawText("AM9", 92, 35, new SKPaint()
+        {
+            Color = SKColors.Black,
+            TextSize = 4,
+        });           
+    }
 }
